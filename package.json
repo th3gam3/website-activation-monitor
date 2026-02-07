@@ -4,6 +4,9 @@
   "description": "Monitor website activation status",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'No build required'"
