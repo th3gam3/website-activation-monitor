@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Activation Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Website Activation Monitor</h1>
+            <p class="subtitle">Monitoring: <a href="https://reservation.umai.io/en/widget/rembayung"
+                    target="_blank">rembayung</a></p>
+            <div id="live-clock" class="clock">
+                <div class="clock-date">Monday, Jan 1, 2000</div>
+                <div class="clock-time">00:00:00</div>
+            </div>
+        </header>
+
+        <main>
+            <div id="status-card" class="card loading">
+                <div class="status-icon">
+                    <div class="pulse-ring"></div>
+                    <span id="icon">Checking...</span>
+                </div>
+                <h2 id="status-text">Initializing Monitor...</h2>
+                <div class="details">
+                    <p>HTTP Code: <span id="http-code">-</span></p>
+                    <p>Final URL: <a id="final-url" href="#" target="_blank">-</a></p>
+                    <p class="timestamp">Last Updated: <span id="last-updated">-</span></p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Made by : IrSAR</p>
+            <p>Auto-refreshing every 5 seconds</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

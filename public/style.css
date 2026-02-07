@@ -1,0 +1,222 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #38bdf8;
+    --success-color: #22c55e;
+    --error-color: #ef4444;
+    --warning-color: #f59e0b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 3rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+}
+
+.subtitle a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.clock {
+    font-size: 3rem;
+    font-weight: 200;
+    margin-top: 1.5rem;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    display: inline-block;
+    padding: 0.5rem 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    line-height: 1.1;
+}
+
+.clock-date {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.clock-time {
+    font-size: 2.5rem;
+    font-weight: 200;
+    color: var(--text-primary);
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 3rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, border 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-icon {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: 4px solid currentColor;
+}
+
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    border: 2px solid currentColor;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.details {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    text-align: left;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.details p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.details span,
+.details a {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.details a {
+    text-decoration: none;
+    word-break: break-all;
+}
+
+footer {
+    margin-top: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+}
+
+/* Status States */
+.card.loading {
+    color: var(--text-secondary);
+    border-color: var(--text-secondary);
+}
+
+.card.active-queue {
+    color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.card.redirect-block {
+    color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+.card.active-other {
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+.card.error {
+    color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+.card.active-queue .status-icon {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.card.redirect-block .status-icon {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.card.active-other .status-icon {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.card.active-queue h2::before {
+    content: "✅ ";
+}
+
+.card.redirect-block h2::before {
+    content: "⛔ ";
+}
+
+.card.active-other h2::before {
+    content: "⚠️ ";
+}
