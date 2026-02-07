@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Monitor website activation status",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev",
+    "build": "echo 'No build required'"
   }
 }
