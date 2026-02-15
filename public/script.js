@@ -2,6 +2,16 @@ let inFlight = false;
 const MAX_HISTORY = 50;
 const history = [];
 
+function formatTime12(date) {
+    if (!(date instanceof Date) || !Number.isFinite(date.getTime())) return '-';
+    return date.toLocaleTimeString('en-US', {
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
 function normalizeData(data) {
     const nowIso = new Date().toISOString();
     const d = data && typeof data === 'object' ? data : {};
@@ -25,7 +35,7 @@ function addHistoryEntry(data) {
     if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
 
     const date = new Date(data.timestamp);
-    const timeString = Number.isFinite(date.getTime()) ? date.toLocaleTimeString() : '-';
+    const timeString = formatTime12(date);
 
     const li = document.createElement('li');
     li.className = `history-item ${data.status === 'ACTIVE_OTHER' ? 'active-other' : 'redirect-block'}`;
@@ -86,7 +96,7 @@ function updateUI(data) {
 
     // Format timestamp
     const date = new Date(data.timestamp);
-    const timeString = Number.isFinite(date.getTime()) ? date.toLocaleTimeString() : '-';
+    const timeString = formatTime12(date);
 
     lastUpdated.textContent = timeString;
     httpCode.textContent = data.code || '-';
