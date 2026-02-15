@@ -1,16 +1,79 @@
+let inFlight = false;
+const MAX_HISTORY = 50;
+const history = [];
+
+function normalizeData(data) {
+    const nowIso = new Date().toISOString();
+    const d = data && typeof data === 'object' ? data : {};
+    const status = (d.status === 'ACTIVE_OTHER' || d.status === 'REDIRECT_BLOCK') ? d.status : 'REDIRECT_BLOCK';
+    return {
+        status,
+        detailStatus: d.detailStatus || (status === 'ACTIVE_OTHER' ? 'ACTIVE_OTHER' : 'UNKNOWN'),
+        code: d.code,
+        finalUrl: d.finalUrl,
+        durationMs: d.durationMs,
+        message: d.message,
+        timestamp: d.timestamp || nowIso
+    };
+}
+
+function addHistoryEntry(data) {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+
+    history.unshift(data);
+    if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
+
+    const date = new Date(data.timestamp);
+    const timeString = Number.isFinite(date.getTime()) ? date.toLocaleTimeString() : '-';
+
+    const li = document.createElement('li');
+    li.className = `history-item ${data.status === 'ACTIVE_OTHER' ? 'active-other' : 'redirect-block'}`;
+
+    const badgeText = data.status === 'ACTIVE_OTHER' ? 'ACTIVE' : 'BLOCKED';
+    const metaParts = [];
+    if (typeof data.code !== 'undefined') metaParts.push(`code ${data.code}`);
+    if (data.detailStatus && data.detailStatus !== data.status) metaParts.push(`detail ${data.detailStatus}`);
+    if (typeof data.durationMs === 'number') metaParts.push(`${data.durationMs}ms`);
+    if (data.message) metaParts.push(data.message);
+
+    li.innerHTML = `
+        <span class="history-time">${timeString}</span>
+        <span class="history-main">
+            <span class="history-badge">${badgeText}</span>
+            <span class="history-meta">${metaParts.join(' · ')}</span>
+        </span>
+    `;
+
+    list.prepend(li);
+    while (list.children.length > MAX_HISTORY) list.removeChild(list.lastElementChild);
+}
+
 async function checkStatus() {
+    if (inFlight) return;
+    inFlight = true;
     try {
         const response = await fetch('/api/status');
-        const data = await response.json();
 
-        updateUI(data);
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            data = null;
+        }
+
+        const normalized = normalizeData(data || { status: 'REDIRECT_BLOCK', detailStatus: 'BAD_RESPONSE', message: `HTTP ${response.status}` });
+        updateUI(normalized);
     } catch (error) {
         console.error('Error fetching status:', error);
-        updateUI({ status: 'ERROR', timestamp: new Date().toISOString() });
+        updateUI(normalizeData({ status: 'REDIRECT_BLOCK', detailStatus: 'CLIENT_ERROR', message: error.message }));
+    } finally {
+        inFlight = false;
     }
 }
 
 function updateUI(data) {
+    data = normalizeData(data);
     const card = document.getElementById('status-card');
     const iconText = document.getElementById('icon');
     const statusText = document.getElementById('status-text');
@@ -23,39 +86,37 @@ function updateUI(data) {
 
     // Format timestamp
     const date = new Date(data.timestamp);
-    const timeString = date.toLocaleTimeString();
+    const timeString = Number.isFinite(date.getTime()) ? date.toLocaleTimeString() : '-';
 
     lastUpdated.textContent = timeString;
     httpCode.textContent = data.code || '-';
-    finalUrl.textContent = data.finalUrl || '-';
-    if (data.finalUrl) finalUrl.href = data.finalUrl;
+    if (data.finalUrl) {
+        finalUrl.textContent = data.finalUrl;
+        finalUrl.href = data.finalUrl;
+    } else {
+        finalUrl.textContent = '-';
+        finalUrl.href = '#';
+    }
 
     switch (data.status) {
-        case 'QUEUE_ACTIVE':
-            card.classList.add('active-queue');
-            iconText.textContent = 'ACTIVE';
-            statusText.textContent = 'Queue Active';
-            break;
         case 'REDIRECT_BLOCK':
             card.classList.add('redirect-block');
             iconText.textContent = 'BLOCKED';
-            statusText.textContent = 'Redirected to Block';
+            statusText.textContent = 'Blocked';
             break;
         case 'ACTIVE_OTHER':
             card.classList.add('active-other');
-            iconText.textContent = 'UNKNOWN';
-            statusText.textContent = 'Active (No Queue)';
-            break;
-        case 'ERROR':
-            card.classList.add('error');
-            iconText.textContent = 'ERROR';
-            statusText.textContent = 'Monitor Error';
+            iconText.textContent = 'ACTIVE';
+            statusText.textContent = 'Active';
             break;
         default:
-            card.classList.add('loading');
-            iconText.textContent = '???';
-            statusText.textContent = 'Unknown Status';
+            // Keep UI binary even if backend changes.
+            card.classList.add('redirect-block');
+            iconText.textContent = 'BLOCKED';
+            statusText.textContent = 'Blocked';
     }
+
+    addHistoryEntry(data);
 }
 
 // Initial check

@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "vercel dev",
+    "local": "node test-server.js",
     "build": "echo 'No build required'"
   }
 }

@@ -13,7 +13,7 @@
         <header>
             <h1>Website Activation Monitor</h1>
             <p class="subtitle">Monitoring: <a href="https://reservation.umai.io/en/widget/rembayung"
-                    target="_blank">rembayung</a></p>
+                    target="_blank" rel="noopener noreferrer">rembayung</a></p>
             <div id="live-clock" class="clock">
                 <div class="clock-date">Monday, Jan 1, 2000</div>
                 <div class="clock-time">00:00:00</div>
@@ -29,10 +29,18 @@
                 <h2 id="status-text">Initializing Monitor...</h2>
                 <div class="details">
                     <p>HTTP Code: <span id="http-code">-</span></p>
-                    <p>Final URL: <a id="final-url" href="#" target="_blank">-</a></p>
+                    <p>Final URL: <a id="final-url" href="#" target="_blank" rel="noopener noreferrer">-</a></p>
                     <p class="timestamp">Last Updated: <span id="last-updated">-</span></p>
                 </div>
             </div>
+
+            <section class="history" aria-label="Status history">
+                <div class="history-header">
+                    <h3>Status History</h3>
+                    <p class="history-subtitle">Latest checks (newest first)</p>
+                </div>
+                <ul id="history-list" class="history-list"></ul>
+            </section>
         </main>
 
         <footer>

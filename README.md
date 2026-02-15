@@ -25,7 +25,14 @@ Vercel will serve:
 
 ## Local Development (Optional)
 
-If you want to run locally with Vercel’s dev server:
+Run locally without Vercel (simple Node server):
+```bash
+npm run local
+```
+Then open:
+`http://localhost:3000`
+
+If you want to run locally with Vercel’s dev server (requires Vercel CLI installed):
 ```bash
 vercel dev
 ```
@@ -34,7 +41,10 @@ Then open:
 
 ## Configuration
 
-- **Target URL**: Configured in `api/status.js` (`WIDGET_URL`).
+- **Target URL**: Defaults are in `api/status.js`, but you can override via env vars:
+  - `WIDGET_URL` (default: `https://reservation.umai.io/en/widget/rembayung`)
+  - `BLOCK_URL` (default: `https://reservation.umai.io/en/block/rembayung`)
+  - `FETCH_TIMEOUT_MS` (default: `8000`)
 
 ## Credits
 
