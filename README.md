@@ -7,11 +7,13 @@ A real-time monitoring tool for checking the activation status of the Rembayung 
 - **Live Status Monitoring**: Checks if the website is active or redirected to a block page.
 - **Real-time UI**: Updates status every 5 seconds without refreshing.
 - **Visual Status Indicators**:
-  - ✅ **Queue Active**: Website is serving the virtual queue/high traffic page.
-  - ⛔ **Redirect Block**: Website is redirecting to the block page.
-  - ⚠️ **Active (Other)**: Website is active but content is unknown.
+  - ✅ **Active**: Widget is reachable (active content detected).
+  - ⛔ **Blocked**: Widget request is redirected/blocked.
+- **Status History**: Shows a live rolling history of the latest checks at the bottom (newest first).
 - **Live Clock**: Displays current time with seconds (12-hour format).
-- **Responsive Design**: Premium dark-mode UI.
+- **Dark iOS Glass UI**: Frosted glass panels with blur, subtle borders, depth, and an aurora-style dark background.
+- **Motion + Accessibility**: Polished animations, with `prefers-reduced-motion` support.
+- **Responsive Design**: Works well on mobile and desktop.
 
 ## Publish (GitHub + Vercel)
 
@@ -39,12 +41,25 @@ vercel dev
 Then open:
 `http://localhost:3000`
 
+Note: If port 3000 is already in use, stop the existing process first.
+
 ## Configuration
 
 - **Target URL**: Defaults are in `api/status.js`, but you can override via env vars:
   - `WIDGET_URL` (default: `https://reservation.umai.io/en/widget/rembayung`)
   - `BLOCK_URL` (default: `https://reservation.umai.io/en/block/rembayung`)
   - `FETCH_TIMEOUT_MS` (default: `8000`)
+
+## API Response
+
+`GET /api/status` returns HTTP 200 with JSON and `Cache-Control: no-store`.
+
+- `status`: one of `ACTIVE_OTHER` (Active) or `REDIRECT_BLOCK` (Blocked). The UI is intentionally binary.
+- `detailStatus`: internal classification (e.g. `QUEUE_ACTIVE`, `UPSTREAM_ERROR`, `TIMEOUT`, `ERROR`, etc.).
+- `code`: upstream HTTP code (when available).
+- `finalUrl`: final URL after redirects (when available).
+- `durationMs`: time spent on the check.
+- `timestamp`: ISO time the check completed.
 
 ## Credits
 
