@@ -47,13 +47,25 @@ function addHistoryEntry(data) {
     if (typeof data.durationMs === 'number') metaParts.push(`${data.durationMs}ms`);
     if (data.message) metaParts.push(data.message);
 
-    li.innerHTML = `
-        <span class="history-time">${timeString}</span>
-        <span class="history-main">
-            <span class="history-badge">${badgeText}</span>
-            <span class="history-meta">${metaParts.join(' · ')}</span>
-        </span>
-    `;
+    const timeEl = document.createElement('span');
+    timeEl.className = 'history-time';
+    timeEl.textContent = timeString;
+
+    const mainEl = document.createElement('span');
+    mainEl.className = 'history-main';
+
+    const badgeEl = document.createElement('span');
+    badgeEl.className = 'history-badge';
+    badgeEl.textContent = badgeText;
+
+    const metaEl = document.createElement('span');
+    metaEl.className = 'history-meta';
+    metaEl.textContent = metaParts.join(' · ');
+
+    mainEl.appendChild(badgeEl);
+    mainEl.appendChild(metaEl);
+    li.appendChild(timeEl);
+    li.appendChild(mainEl);
 
     list.prepend(li);
     while (list.children.length > MAX_HISTORY) list.removeChild(list.lastElementChild);
