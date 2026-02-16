@@ -132,8 +132,8 @@ function updateUI(data) {
 // Initial check
 checkStatus();
 
-// Poll every 5 seconds
-setInterval(checkStatus, 5000);
+// Poll every 1 second.
+setInterval(checkStatus, 1000);
 
 // Live Clock
 function updateClock() {

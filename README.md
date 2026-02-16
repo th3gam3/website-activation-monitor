@@ -5,7 +5,7 @@ A real-time monitoring tool for checking the activation status of the Rembayung 
 ## Features
 
 - **Live Status Monitoring**: Checks if the website is active or redirected to a block page.
-- **Real-time UI**: Updates status every 5 seconds without refreshing.
+- **Real-time UI**: Updates status every 1 second without refreshing.
 - **Visual Status Indicators**:
   - ✅ **Active**: Widget is reachable (active content detected).
   - ⛔ **Blocked**: Widget request is redirected/blocked.
