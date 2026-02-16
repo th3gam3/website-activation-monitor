@@ -39,8 +39,17 @@ const server = http.createServer(async (req, res) => {
         // Serve static files from public/
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
-        let urlPath = req.url === '/' ? '/index.html' : req.url;
-        let filePath = path.join(__dirname, 'public', urlPath);
+        const publicDir = path.resolve(__dirname, 'public');
+        const rawPath = req.url === '/' ? '/index.html' : req.url.split('?')[0];
+        const normalizedPath = path.normalize(rawPath).replace(/^(\.\.[/\\])+/, '');
+        const safeRelativePath = normalizedPath.replace(/^[/\\]+/, '');
+        const filePath = path.resolve(publicDir, safeRelativePath);
+
+        if (!filePath.startsWith(`${publicDir}${path.sep}`) && filePath !== publicDir) {
+            res.statusCode = 403;
+            res.end('Forbidden');
+            return;
+        }
 
         if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
             const ext = path.extname(filePath);
