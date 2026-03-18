@@ -2,6 +2,49 @@ let inFlight = false;
 const MAX_HISTORY = 50;
 const history = [];
 
+// ── Remote-control state ──────────────────────────────────────────
+let paused = false;
+let pollIntervalMs = 1000;
+let pollTimer = null;
+let soundEnabled = false;
+let lastStatus = null;          // tracks previous status for change detection
+let audioCtx = null;            // Web Audio context (lazy init)
+
+// ── Audio helpers ─────────────────────────────────────────────────
+
+function getAudioCtx() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
+
+function playActivationChime() {
+    try {
+        const ctx = getAudioCtx();
+        // Two-tone rising chime: 880 Hz then 1320 Hz
+        const notes = [880, 1320];
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            const t = ctx.currentTime + i * 0.18;
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.30, t + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+            osc.start(t);
+            osc.stop(t + 0.40);
+        });
+    } catch (e) {
+        // Audio not available — silently ignore
+    }
+}
+
+// ── Formatting helpers ────────────────────────────────────────────
+
 function formatTime12(date) {
     if (!(date instanceof Date) || !Number.isFinite(date.getTime())) return '-';
     return date.toLocaleTimeString('en-US', {
@@ -26,6 +69,8 @@ function normalizeData(data) {
         timestamp: d.timestamp || nowIso
     };
 }
+
+// ── History ───────────────────────────────────────────────────────
 
 function addHistoryEntry(data) {
     const list = document.getElementById('history-list');
@@ -71,8 +116,16 @@ function addHistoryEntry(data) {
     while (list.children.length > MAX_HISTORY) list.removeChild(list.lastElementChild);
 }
 
+function clearHistory() {
+    history.length = 0;
+    const list = document.getElementById('history-list');
+    if (list) list.innerHTML = '';
+}
+
+// ── Status check & UI update ──────────────────────────────────────
+
 async function checkStatus() {
-    if (inFlight) return;
+    if (inFlight || paused) return;
     inFlight = true;
     try {
         const response = await fetch('/api/status');
@@ -103,7 +156,7 @@ function updateUI(data) {
     const finalUrl = document.getElementById('final-url');
     const lastUpdated = document.getElementById('last-updated');
 
-    // Reset classes
+    // Reset classes (keep paused-overlay if paused)
     card.className = 'card';
 
     // Format timestamp
@@ -132,20 +185,92 @@ function updateUI(data) {
             statusText.textContent = 'Active';
             break;
         default:
-            // Keep UI binary even if backend changes.
             card.classList.add('redirect-block');
             iconText.textContent = 'BLOCKED';
             statusText.textContent = 'Blocked';
     }
 
+    // Sound alert: play chime when transitioning to ACTIVE
+    if (soundEnabled && lastStatus !== null && lastStatus !== 'ACTIVE_OTHER' && data.status === 'ACTIVE_OTHER') {
+        playActivationChime();
+    }
+    lastStatus = data.status;
+
     addHistoryEntry(data);
 }
 
-// Initial check
-checkStatus();
+// ── Polling control ───────────────────────────────────────────────
 
-// Poll every 1 second.
-setInterval(checkStatus, 1000);
+function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(checkStatus, pollIntervalMs);
+}
+
+function stopPolling() {
+    if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+    }
+}
+
+// ── Remote-control UI wiring ──────────────────────────────────────
+
+function initRemoteControl() {
+    // Pause / Resume
+    const btnPause = document.getElementById('btn-pause');
+    const pauseIcon = document.getElementById('pause-icon');
+    const pauseLabel = document.getElementById('pause-label');
+    const card = document.getElementById('status-card');
+
+    btnPause.addEventListener('click', () => {
+        paused = !paused;
+        if (paused) {
+            pauseIcon.textContent = '▶';
+            pauseLabel.textContent = 'Resume';
+            btnPause.classList.add('paused');
+            card.classList.add('paused-overlay');
+        } else {
+            pauseIcon.textContent = '⏸';
+            pauseLabel.textContent = 'Pause';
+            btnPause.classList.remove('paused');
+            card.classList.remove('paused-overlay');
+            checkStatus(); // immediate check on resume
+        }
+    });
+
+    // Clear history
+    document.getElementById('btn-clear').addEventListener('click', clearHistory);
+
+    // Interval pills
+    document.querySelectorAll('.rc-interval-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.rc-interval-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            pollIntervalMs = Number(btn.dataset.ms);
+            startPolling();
+        });
+    });
+
+    // Sound toggle
+    const btnSound = document.getElementById('btn-sound');
+    const soundLabel = document.getElementById('sound-label');
+
+    btnSound.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        btnSound.setAttribute('aria-checked', String(soundEnabled));
+        soundLabel.textContent = soundEnabled ? 'On' : 'Off';
+        // Play a preview chime so the user knows audio is working
+        if (soundEnabled) playActivationChime();
+    });
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+
+// Initial check then start polling
+checkStatus();
+startPolling();
+
+initRemoteControl();
 
 // Live Clock
 function updateClock() {
@@ -174,6 +299,5 @@ function updateClock() {
     }
 }
 
-// Update clock immediately and then every second
 updateClock();
 setInterval(updateClock, 1000);
