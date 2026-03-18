@@ -34,6 +34,40 @@
                 </div>
             </div>
 
+            <section class="remote-control" aria-label="Remote control panel">
+                <div class="rc-header">
+                    <h3>Remote Control</h3>
+                </div>
+                <div class="rc-body">
+                    <div class="rc-row">
+                        <button id="btn-pause" class="rc-btn rc-btn-primary" aria-label="Pause or resume monitoring">
+                            <span id="pause-icon">⏸</span>
+                            <span id="pause-label">Pause</span>
+                        </button>
+                        <button id="btn-clear" class="rc-btn rc-btn-secondary" aria-label="Clear history">
+                            🗑 Clear History
+                        </button>
+                    </div>
+                    <div class="rc-row rc-row-wrap">
+                        <label class="rc-label" for="interval-select">Poll Interval</label>
+                        <div class="rc-interval-group" role="group" aria-label="Poll interval">
+                            <button class="rc-interval-btn" data-ms="500">0.5s</button>
+                            <button class="rc-interval-btn active" data-ms="1000">1s</button>
+                            <button class="rc-interval-btn" data-ms="2000">2s</button>
+                            <button class="rc-interval-btn" data-ms="5000">5s</button>
+                            <button class="rc-interval-btn" data-ms="10000">10s</button>
+                        </div>
+                    </div>
+                    <div class="rc-row">
+                        <label class="rc-label" for="btn-sound">Sound Alert</label>
+                        <button id="btn-sound" class="rc-toggle" role="switch" aria-checked="false" aria-label="Toggle sound alert on activation">
+                            <span class="rc-toggle-thumb"></span>
+                        </button>
+                        <span id="sound-label" class="rc-toggle-label">Off</span>
+                    </div>
+                </div>
+            </section>
+
             <section class="history" aria-label="Status history">
                 <div class="history-header">
                     <h3>Status History</h3>

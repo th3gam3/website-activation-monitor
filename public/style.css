@@ -429,6 +429,211 @@ footer p {
     content: "✅ ";
 }
 
+/* ── Remote Control Panel ─────────────────────────────────────── */
+
+.remote-control {
+    margin-top: 1.6rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(22px) saturate(155%);
+    -webkit-backdrop-filter: blur(22px) saturate(155%);
+    overflow: hidden;
+}
+
+.rc-header {
+    padding: 0.85rem 1.1rem 0.65rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.rc-header h3 {
+    font-size: 0.92rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(220, 230, 255, 0.70);
+}
+
+.rc-body {
+    padding: 0.95rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.rc-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.rc-row-wrap {
+    flex-wrap: wrap;
+}
+
+.rc-label {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    min-width: 7rem;
+    user-select: none;
+}
+
+/* Buttons */
+.rc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.52rem 1.1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease, transform 100ms ease;
+    user-select: none;
+}
+
+.rc-btn:hover {
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+.rc-btn:active {
+    transform: scale(0.97);
+}
+
+.rc-btn-primary {
+    border-color: rgba(79, 209, 255, 0.30);
+    background: rgba(79, 209, 255, 0.10);
+    color: var(--accent-a);
+}
+
+.rc-btn-primary:hover {
+    background: rgba(79, 209, 255, 0.18);
+    border-color: rgba(79, 209, 255, 0.45);
+}
+
+.rc-btn-primary.paused {
+    border-color: rgba(50, 215, 75, 0.35);
+    background: rgba(50, 215, 75, 0.10);
+    color: var(--success-color);
+}
+
+.rc-btn-primary.paused:hover {
+    background: rgba(50, 215, 75, 0.18);
+    border-color: rgba(50, 215, 75, 0.50);
+}
+
+.rc-btn-secondary {
+    border-color: rgba(255, 69, 58, 0.28);
+    background: rgba(255, 69, 58, 0.08);
+    color: var(--error-color);
+}
+
+.rc-btn-secondary:hover {
+    background: rgba(255, 69, 58, 0.15);
+    border-color: rgba(255, 69, 58, 0.45);
+}
+
+/* Interval pill buttons */
+.rc-interval-group {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.rc-interval-btn {
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+    user-select: none;
+}
+
+.rc-interval-btn:hover {
+    background: rgba(255, 255, 255, 0.11);
+    color: var(--text-primary);
+}
+
+.rc-interval-btn.active {
+    border-color: rgba(79, 209, 255, 0.50);
+    background: rgba(79, 209, 255, 0.14);
+    color: var(--accent-a);
+}
+
+/* Sound toggle switch */
+.rc-toggle {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: background 200ms ease, border-color 200ms ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.rc-toggle[aria-checked="true"] {
+    background: rgba(50, 215, 75, 0.32);
+    border-color: rgba(50, 215, 75, 0.55);
+}
+
+.rc-toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(220, 230, 255, 0.70);
+    transition: transform 200ms ease, background 200ms ease;
+    pointer-events: none;
+}
+
+.rc-toggle[aria-checked="true"] .rc-toggle-thumb {
+    transform: translateX(18px);
+    background: var(--success-color);
+}
+
+.rc-toggle-label {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    user-select: none;
+    min-width: 2rem;
+}
+
+/* Paused banner on status card */
+.card.paused-overlay::after {
+    content: "PAUSED";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: rgba(220, 230, 255, 0.55);
+    background: rgba(5, 7, 15, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 2;
+    border-radius: inherit;
+}
+
 @media (max-width: 520px) {
     body {
         align-items: flex-start;
