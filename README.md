@@ -2,6 +2,14 @@
 
 A real-time monitoring tool for checking the activation status of the Rembayung reservation widget.
 
+## Tech Stack
+- **Frontend**: Static HTML/CSS/JS (dark iOS glass UI)
+- **Backend**: Node.js serverless API (`api/status.js`)
+- **Deploy**: Vercel (static site + serverless)
+
+## Git Remote
+- **origin**: `https://github.com/th3gam3/website-activation-monitor.git`
+
 ## Features
 
 - **Live Status Monitoring**: Checks if the website is active or redirected to a block page.
