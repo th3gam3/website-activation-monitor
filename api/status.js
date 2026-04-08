@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       });
     }
 
-    if (/virtual queue|high traffic/i.test(body)) {
+    if (/virtual queue|high traffic|waiting room|bilik menunggu|giliran maya/i.test(body)) {
       return sendJson(res, {
         // UI only cares about blocked vs not blocked.
         status: "ACTIVE_OTHER",
